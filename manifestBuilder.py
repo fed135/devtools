@@ -21,7 +21,7 @@ Description:
     manifest, or multiple ones in each folder. 
 
 Running:
-    python manifestBuilder.py
+    python manifestBuilder.py [target_folder] [options]
 
 Options:
     -a    file paths will be absolute instead of relative
@@ -31,6 +31,7 @@ Options:
     -v    verbose mode
 
 Roadmap:
+    -Make verbose output more detailed
     -Add filtering option for specific file types/file names, etc.
     -Add option to change output file name/location
     -Add help method
@@ -89,17 +90,23 @@ class ManifestBuilder(object):
                 
         """
 
-        self.log('Scanning directory...')
-        self.scan_directory(dir, '', self.global_manifest)
+        self.log('Scanning directory ' + dir + '...')
+        self.scan_directory(dir, dir, '', self.global_manifest)
         for root, dirs, files in os.walk(dir):
             for folder in dirs:
-                self.scan_directory(folder, root, self.global_manifest)
+                if self.settings.local :
+                    self.local_manifest = []
+                    self.scan_directory(dir, folder, root, self.local_manifest)
+                    self.write_manifest(folder, root, self.local_manifest)
+                else :
+                    self.scan_directory(dir, folder, root, self.global_manifest)
 
         
+        self.write_manifest(dir, root, self.global_manifest)
         self.log('Scan completed!')
 
 
-    def scan_directory(self, dir, root, manifest):
+    def scan_directory(self, start, dir, root, manifest):
 
         """
         Scans the provided directory and adds the files to the 
@@ -115,18 +122,21 @@ class ManifestBuilder(object):
         fullpath = ""
         isfile = False
         entry = {}
+        trimmed_local_path = root.replace(start, '')[1:]
 
         for item in os.listdir(os.path.join(root, dir)):
             fullpath = os.path.join(root, dir, item)
             isfile = os.path.isfile(fullpath)
             entry = {}
-
             
             #Add entry path to manifest
             if self.settings.absolute :
                 entry['path'] = fullpath
             else :
-                entry['path'] = item
+                if root == "" :
+                    entry['path'] = item
+                else :
+                    entry['path'] = os.path.join(trimmed_local_path, dir, item)
 
             if isfile == False & self.settings.directories == False:
                 continue
@@ -191,6 +201,13 @@ class ManifestBuilderSettings(object):
 
 
 def main():
+
+    """
+    Entry point.
+    Builds the config object from the command line parameters
+    then passes it to the ManifestBuilder class
+
+    """
 
     settings = ManifestBuilderSettings(sys.argv)
     ManifestBuilder(settings)
