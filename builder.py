@@ -11,17 +11,17 @@ Version:
     1.0.2
 
 Repository:
-    https://github.com/fed135/devtools
+    https://github.com/fed135/manifest-builder
 
 Copyright:
-    GNU Licence 2014-2015
+    GNU Licence 2014
 
 Description:
     Allows you to scan a folder structure and generate one global 
     manifest, or multiple ones in each folder. 
 
 Running:
-    python manifestBuilder.py [target_folder] [options]
+    python builder.py [target_folder] [options]
 
 Options:
     -a    file paths will be absolute instead of relative
@@ -30,11 +30,6 @@ Options:
     -s    adds file size in the manifest (bytes)
     -v    verbose mode
 
-Roadmap:
-    -Make verbose output more detailed
-    -Add filtering option for specific file types/file names, etc.
-    -Add option to change output file name/location
-    -Add help method
 
 """
 
