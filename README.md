@@ -2,11 +2,13 @@
 
 Allows you to scan a folder structure and generate one global 
 manifest, or multiple ones in each folder. 
+
+Compatible with Python 2.x
   
   
 ## Running
 
-    $ python manifestBuilder.py [target_folder] [options]
+    $ python builder.py [target_folder] [options]
     
 
 ## Options
